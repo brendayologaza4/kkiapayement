@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement via KKiaPay</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Payer maintenant avec KKiaPay</h1>
+    <input id="email" type="email" placeholder="Email du client" required>
+    <input id="amount" type="number" placeholder="Montant (FCFA)" required>
+    <button onclick="payNow()">PAYER</button>
+
+    <div id="message"></div>
+</div>
+
+<script>
+async function payNow() {
+    const email = document.getElementById("email").value;
+    const amount = document.getElementById("amount").value;
+
+    const res = await fetch("/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, amount })
+    });
+    const data = await res.json();
+
+    if (data.status === "success") {
+        window.location.href = data.data.checkout_url;
+    } else {
+        document.getElementById("message").innerText = "Erreur : " + JSON.stringify(data);
+    }
+}
+</script>
+
+</body>
+</html>
